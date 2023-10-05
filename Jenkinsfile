@@ -2,7 +2,7 @@ node{
     def app
     
     stage('Clone repository'){
-        git 'https://github.com/JellaliOumayma/Docker-projet'
+        git 'https://github.com/JellaliOumayma/Docker-projet.git'
         
     }
      stage('Build the image'){
