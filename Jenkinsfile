@@ -1,46 +1,25 @@
-pipeline{
+node{
+    def app
+    
+    stage('Clone repository'){
+        git 'https://github.com/JellaliOumayma/Docker-projet.git'
+        
+    }
+     stage('Build the image'){
+        app = docker.build("oumymajellali/my-app:${env.BUILD_NUMBER}") 
+        
+    }
+    stage('Test image'){
+        app.inside{
+            sh 'echo "test passed"'
+        }
+    }
+  
+    stage('Push the image'){
+        withCredentials([usernamePassword(credentialsId: 'oumymajellali-dockerhub', passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
+            sh 'docker login -u ${DOCKER_USERNAME} -p ${DOCKER_PASSWORD}'
+            sh "docker push oumymajellali/my-app:${env.BUILD_NUMBER}"
+        }
 
-	agent any
-
-	environment {
-		DOCKERHUB_CREDENTIALS=credentials('oumymajellali-dockerhub')
-	}
-
-	stages {
-	    
-	    stage('gitclone') {
-
-			steps {
-				   git 'https://github.com/JellaliOumayma/Docker-projet.git'
-			}
-		}
-
-		stage('Build') {
-
-			steps {
-				sh 'docker build -t oumymajellali/my-app:latest .'
-			}
-		}
-
-		stage('Login') {
-
-			steps {
-				sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
-			}
-		}
-
-		stage('Push') {
-
-			steps {
-				sh 'docker push oumymajellali/my-app:latest'
-			}
-		}
-	}
-
-	post {
-		always {
-			sh 'docker logout'
-		}
-	}
-
+    }    
 }
