@@ -17,8 +17,7 @@ node{
   stage('Push the image') {
     withCredentials([usernamePassword(credentialsId: 'oumymajellali-dockerhub', passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
         sh "echo \${DOCKER_PASSWORD} | docker login -u \${DOCKER_USERNAME} --password-stdin"
-        sh "docker push oumymajellali/my-app:\${env.BUILD_NUMBER}"
-    }
+        sh "docker push oumymajellali/my-app:${env.BUILD_NUMBER}"
 }
      
 }
